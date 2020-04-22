@@ -29,13 +29,26 @@ class App extends React.Component {
     else{
       fullUrl = '/api/pets?type=' + petType
     }
-    console.log(petType)
-    console.log(fullUrl)
+    // console.log(petType)
+    // console.log(fullUrl)
     fetch(fullUrl)
       .then(res => res.json())
-      .then(objects => {this.setState({pets: objects})})
-    console.log(this.state.pets)
+      .then(objects => {
+        this.setState({
+          pets: objects
+        })
+        // console.log(this.state.pets)
+      })
   }
+
+  onAdoptPet = (petId) =>{
+    let adopted = this.state.pets.map(pet =>{
+      return pet.id === petId ? {...pet, isAdopted: true} : pet
+    })
+    this.setState({pets: adopted})
+    // console.log(this.state)
+  }
+
 
   render() {
     return (
@@ -52,7 +65,10 @@ class App extends React.Component {
               />
             </div>
             <div className="twelve wide column">
-              <PetBrowser />
+              <PetBrowser 
+                pets = {this.state.pets}
+                onAdoptPet = {this.onAdoptPet}
+              />
             </div>
           </div>
         </div>
