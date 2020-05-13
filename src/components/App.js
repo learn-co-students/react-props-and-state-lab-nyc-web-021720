@@ -15,7 +15,46 @@ class App extends React.Component {
     }
   }
 
+  //api fetch
+
+  fetchPets = () => {
+    fetch('/api/pets')
+    .then(response => response.json())
+    .then(pets => {
+      this.setState ({pets}) 
+    })
+  }
+
+  fetchType = () => {
+    fetch(`/api/pets?type=${this.state.filters.type}`)
+    .then(response => response.json())
+    .then(pets => {
+      this.setState ({pets}) 
+    })
+  }
+
+  handleAdoptedClick = (id) => {
+    let updatedPets = this.state.pets.map(pet => {
+      if (pet.id === id) {
+       return ({...pet, isAdopted: true})
+      } else {
+        return pet}
+    })
+    this.setState({pets: updatedPets})
+  }
+
+  onFilterChange = (event) => {
+    this.setState ({filters: {type: event.target.value}})
+  }
+
+  findButton = () => {
+    return this.state.filters.type === 'all' ? this.fetchPets() : this.fetchType()  
+  }
+
+
+
   render() {
+    console.log(this.state.pets)
     return (
       <div className="ui container">
         <header>
@@ -24,10 +63,10 @@ class App extends React.Component {
         <div className="ui container">
           <div className="ui grid">
             <div className="four wide column">
-              <Filters />
+              <Filters fetchPets={this.fetchPets} onFilterChange={this.onFilterChange} findButton={this.findButton}/>
             </div>
             <div className="twelve wide column">
-              <PetBrowser />
+              <PetBrowser pets={this.state.pets} handleAdoptedClick={this.handleAdoptedClick}/>
             </div>
           </div>
         </div>
